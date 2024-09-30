@@ -167,7 +167,8 @@
                     <td>${user.email || 'N/A'}</td>
                     <td>
                         <select id="${user.uid}-role-input" onchange="setUserRole('${user.uid}', '${user.email}', '${user.customClaims.role}');">
-                           <option value="user">User</option>
+                           <option value="none"></option>
+                           <option value="normal">Normale</option>
                            <option value="admin">Admin</option>
                         </select>
                     </td>
@@ -176,17 +177,18 @@
                     </td>
                 `;
                 tableBody.appendChild(row);
-                document.getElementById(user.uid + '-role-input').value = user.customClaims.role || 'user';
+                document.getElementById(user.uid + '-role-input').value = user.customClaims.role || 'none';
             });
         }
 
 
         async function setUserRole(userUid, userEmail, userCustomClaims) {
             const uid = userUid;
-            const role = document.getElementById(userUid + '-role-input').value;
+            const roleInput = document.getElementById(userUid + '-role-input');
+            var role = roleInput.value
 
 
-            if (confirm('Sei sicuro di modificare i permessi all\'utente: ' + userEmail + ' da ' + userCustomClaims + ' a ' + role + '?')) {
+            if (confirm('Sei sicuro di modificare i permessi all\'utente: ' + userEmail + ' da ' + userCustomClaims + ' a ' + roleInput.value + '?')) {
                 try {
                     const response = await fetch('http://localhost:5000/setRole', {
                         method: 'POST',
@@ -202,6 +204,9 @@
                 } catch (error) {
                     console.error('Errore nel settaggio del ruolo:', error);
                 }
+            }else{
+                //riporto il valore dell'input a nessuno
+                roleInput.value = '';
             }
         }
 
